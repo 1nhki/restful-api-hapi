@@ -1,7 +1,7 @@
 //console.log("halo kita menggunakan hapi")
 const Hapi = require('@hapi/hapi');
 
-const NoteValidator = require('./validator/notes')
+const NoteValidator = require('./validator/notes');
 const notes = require('./api/notes');
 const NotesService = require('./services/inMemory/NotesService');
 
