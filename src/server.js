@@ -4,6 +4,7 @@ const Hapi = require('@hapi/hapi');
 const NoteValidator = require('./validator/notes');
 const notes = require('./api/notes');
 const NotesService = require('./services/inMemory/NotesService');
+const ClientError = require('./exceptions/ClientError');
 
 
 const init = async () => {
@@ -30,7 +31,6 @@ const init = async () => {
   server.ext('onPreResponse', (request, h) => {
     // mendapatkan konteks response dari request
     const { response } = request;
-  
     // penanganan client error secara internal.
     if (response instanceof ClientError) {
       const newResponse = h.response({
