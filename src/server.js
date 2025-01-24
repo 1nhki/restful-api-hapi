@@ -4,7 +4,7 @@ const Hapi = require('@hapi/hapi');
 
 const NoteValidator = require('./validator/notes');
 const notes = require('./api/notes');
-const NotesService = require('./services/postgres/');
+const NotesService = require('./services/postgres/NotesService');
 const ClientError = require('./exceptions/ClientError');
 
 
