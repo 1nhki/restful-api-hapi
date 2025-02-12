@@ -4,18 +4,18 @@ const ClientError = require('../../exceptions/ClientError');
 
 class NotesHandler {
   constructor(service, validator){
-    this._service = service
+    this._service = service;
     this._validator = validator;
 
-    autoBind(this)
+    autoBind(this);
   }
 
   async postNoteHandler(request, h){
     this._validator.validateNotePayload(request.payload);
     const { title = 'untitled', tags, body } = request.payload;
-    const credentialId  = request.auth.credentials.id
+    const credentialId  = request.auth.credentials.id;
 
-    const noteId = await this._service.addNote({title, body, tags}, credentialId);
+    const noteId = await this._service.addNote({ title, body, tags }, credentialId);
 
     const response = h.response({
       status: 'success',
@@ -29,7 +29,7 @@ class NotesHandler {
   }
 
   async getNotesHandler(request, h){
-    const {id : credentialsId} = request.auth.credentials
+    const { id : credentialsId } = request.auth.credentials;
 
     const notes = await this._service.getNote(credentialsId);
     const response = h.response({
@@ -46,7 +46,7 @@ class NotesHandler {
     const { id } = request.params;
     const { id : credentialId } = request.auth.credentials;
 
-    await this._service.verifyNoteOwner(id, credentialId)
+    await this._service.verifyNoteAccess(id, credentialId);
     const note = await this._service.getNoteById(id);
 
 
@@ -63,9 +63,9 @@ class NotesHandler {
     this._validator.validateNotePayload(request.payload);
     const { title, tags, body } = request.payload;
     const { id } = request.params;
-    const {id : credentialsId} = request.auth.credentials
+    const { id : credentialsId } = request.auth.credentials;
 
-    await this._service.verifyNoteOwner(id, credentialsId)
+    await this._service.verifyNoteAccess(id, credentialsId);
     await this._service.editNoteById(id, { title, tags, body });
 
     const response = h.response({
@@ -77,9 +77,9 @@ class NotesHandler {
 
   async deleteNoteByIdHandler(request, h){
     const { id } = request.params;
-    const {id : credentialsId} = request.auth.credentials
-    
-    await this._service.verifyNoteOwner(id, credentialsId)
+    const { id : credentialsId } = request.auth.credentials;
+
+    await this._service.verifyNoteOwner(id, credentialsId);
     await this._service.deleteNoteById(id);
     const response = h.response({
       status : 'success',

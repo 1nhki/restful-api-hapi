@@ -1,41 +1,41 @@
 const { Pool } = require('pg');
-const InvariantError = require('../../exceptions/InvariantError')
+const InvariantError = require('../../exceptions/InvariantError');
 class AuthenticationsService {
   constructor() {
     this._pool = new Pool();
   }
-/**
- * 
- * @param {string} token 
- * fungsi ini berfungsi untuk menambahkan refresh token 
+  /**
+ *
+ * @param {string} token
+ * fungsi ini berfungsi untuk menambahkan refresh token
  * cara kerjanya ialah nanti handler akan nge pass parameter token
- * nah token tersebut akan di gumakan untuk memasukkan refresh token ke db 
+ * nah token tersebut akan di gumakan untuk memasukkan refresh token ke db
  */
   async addRefreshToken(token){
     const query ={
-        text : 'INSERT INTO authentications VALUES ($1) ',
-        values : [token]
-    }
-    await this._pool.query(query)
+      text : 'INSERT INTO authentications VALUES ($1) ',
+      values : [token]
+    };
+    await this._pool.query(query);
 
   }
   async verifyRefreshToken(token){
     const query = {
-        text : 'SELECT token FROM authentications WHERE token = $1',
-        values : [token]
-    }
-    const result = await this._pool.query(query)
+      text : 'SELECT token FROM authentications WHERE token = $1',
+      values : [token]
+    };
+    const result = await this._pool.query(query);
 
     if (!result.rowCount){
-        throw new InvariantError('Refresh token tidak valid')
+      throw new InvariantError('Refresh token tidak valid');
     }
   }
   async deleteRefreshToken(token){
     const query = {
-        text : 'DELETE FROM authentications WHERE token = $1',
-        values : [token]
-    }
-    await this._pool.query(query)
+      text : 'DELETE FROM authentications WHERE token = $1',
+      values : [token]
+    };
+    await this._pool.query(query);
   }
 }
 

@@ -13,20 +13,27 @@ const NotesService = require('./services/postgres/NotesService');
 
 // users
 const users = require('./api/users');
-const UsersService = require('./services/postgres/UsersService')
+const UsersService = require('./services/postgres/UsersService');
 const UsersValidator = require('./validator/users');
 
 // authentications
-const authentications = require('./api/authentication')
-const AuthenticationsService = require('./services/postgres/AuthenticationsService')
-const TokenManager = require('./tokenize/TokenManager')
+const authentications = require('./api/authentication');
+const AuthenticationsService = require('./services/postgres/AuthenticationsService');
+const TokenManager = require('./tokenize/TokenManager');
 const AuthenticationValidator = require('./validator/authentications');
-const { validate } = require('./validator/notes/schema');
+
+
+//collaborations
+const collaborations = require('./api/collaborations');
+const CollaborationsService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validator/collaborations');
 
 const init = async () => {
-  const notesService = new NotesService();
-  const usersService = new UsersService()
-  const authenticationsService = new AuthenticationsService()
+  const collaborationService = new CollaborationsService();
+  const notesService = new NotesService(collaborationService);
+  const usersService = new UsersService();
+  const authenticationsService = new AuthenticationsService();
+
 
   const server = Hapi.server({
     port: process.env.PORT || 3000,
@@ -42,7 +49,7 @@ const init = async () => {
     {
       plugin : Jwt,
     }
-  ])
+  ]);
 
   server.auth.strategy('notesapp_jwt', 'jwt', {
     keys : process.env.ACCESS_TOKEN_KEY,
@@ -58,33 +65,41 @@ const init = async () => {
         id: artifacts.decoded.payload.id
       }
     })
-  })
+  });
 
   await server.register([
     {
-    plugin : notes,
-    options : {
-      service : notesService,
-      validator: NoteValidator
+      plugin : notes,
+      options : {
+        service : notesService,
+        validator: NoteValidator
+      }
+    },
+    {
+      plugin : users,
+      options : {
+        service : usersService,
+        validator : UsersValidator
+      }
+    },
+    {
+      plugin : authentications,
+      options : {
+        authenticationsService,
+        usersService,
+        tokenManager: TokenManager,
+        validator: AuthenticationValidator,
+      }
+    },
+    {
+      plugin : collaborations,
+      options : {
+        collaborationsService : collaborationService,
+        notesService,
+        validator : CollaborationsValidator
+      }
     }
-  },
-  {
-    plugin : users,
-    options : {
-      service : usersService,
-      validator : UsersValidator
-    }
-  },
-  {
-    plugin : authentications,
-    options : {
-      authenticationsService,
-      usersService,
-      tokenManager: TokenManager,
-      validator: AuthenticationValidator,
-    }
-  }
-])
+  ]);
 
   server.ext('onPreResponse', (request, h) => {
     // mendapatkan konteks response dari request
@@ -97,6 +112,9 @@ const init = async () => {
       });
       newResponse.code(response.statusCode);
       return newResponse;
+    }
+    if (response instanceof Error) {
+      console.log(response);
     }
 
     return h.continue;

@@ -1,5 +1,5 @@
 
-/* eslint-disable camelcase */
+
 /**
  * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
  */
@@ -11,25 +11,25 @@ exports.shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 exports.up = (pgm) => {
-    pgm.createTable('users', {
-        id: {
-          type: 'VARCHAR(50)',
-          primaryKey: true,
-        },
-        username: {
-          type: 'VARCHAR(50)',
-          unique: true,
-          notNull: true,
-        },
-        password: {
-          type: 'TEXT',
-          notNull: true,
-        },
-        fullname: {
-          type: 'TEXT',
-          notNull: true,
-        },
-      });
+  pgm.createTable('users', {
+    id: {
+      type: 'VARCHAR(50)',
+      primaryKey: true,
+    },
+    username: {
+      type: 'VARCHAR(50)',
+      unique: true,
+      notNull: true,
+    },
+    password: {
+      type: 'TEXT',
+      notNull: true,
+    },
+    fullname: {
+      type: 'TEXT',
+      notNull: true,
+    },
+  });
 };
 
 /**
@@ -38,5 +38,5 @@ exports.up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 exports.down = (pgm) => {
-    pgm.dropTable('users');
+  pgm.dropTable('users');
 };
