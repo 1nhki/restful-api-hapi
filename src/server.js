@@ -36,8 +36,8 @@ const _exports = require('./api/exports')
 const ExportsValidator = require('./validator/exports')
 const ProducerService = require('./services/rabbitmq/producer')
 // uploads
-const uploads = require('./api/uploads');
-const StorageService = require('./services/storage/StorageService');
+const upload = require('./api/upload');
+const StorageService = require('./services/S3/StorageService');
 const UploadsValidator = require('./validator/uploads');
 
 
@@ -46,7 +46,8 @@ const init = async () => {
   const notesService = new NotesService(collaborationService);
   const usersService = new UsersService();
   const authenticationsService = new AuthenticationsService();
-  const uploadsService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'))
+  const uploadsService = new StorageService()
+  // old storage without s3 //const uploadsService = new StorageService(path.resolve(__dirname, 'api/upload/file/images'))
 
   const server = Hapi.server({
     port: process.env.PORT || 3000,
@@ -123,7 +124,7 @@ const init = async () => {
       }
     },
     {
-      plugin : uploads,
+      plugin : upload,
       options : {
         service : uploadsService,
         validator : UploadsValidator,
