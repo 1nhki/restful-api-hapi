@@ -2,4 +2,4 @@ node_modules/
 *.pem
 old_notes-no-plugin/
 *.env
-src/api/uploads/file
+src/api/upload/file
