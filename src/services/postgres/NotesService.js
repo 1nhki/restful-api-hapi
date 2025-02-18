@@ -32,7 +32,7 @@ class NotesService{
   async getNote(owner){
     try {
       // mendapatkan catatan dari cache
-      const result = this._cacheService.get(`notes:${owner}`)
+      const result = await this._cacheService.get(`notes:${owner}`)
       return JSON.parse(result)
     }catch (errpr){
       const query = {
